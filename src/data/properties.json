@@ -1,0 +1,122 @@
+[
+  {
+    "id": "p1",
+    "title": "Sunrise Residency",
+    "price": 8500000,
+    "location": "Andheri West, Mumbai",
+    "bhk": 2,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p1/640/420",
+    "description": "A bright 2BHK apartment close to the metro station, with a modular kitchen and covered parking."
+  },
+  {
+    "id": "p2",
+    "title": "Green Valley Apartments",
+    "price": 32000,
+    "location": "Whitefield, Bengaluru",
+    "bhk": 3,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p2/640/420",
+    "description": "Spacious 3BHK in a gated community with a clubhouse, gym, and children's play area."
+  },
+  {
+    "id": "p3",
+    "title": "Lakeview Heights",
+    "price": 12500000,
+    "location": "Hitech City, Hyderabad",
+    "bhk": 3,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p3/640/420",
+    "description": "Premium high-rise flat with a lake-facing balcony and 24/7 security."
+  },
+  {
+    "id": "p4",
+    "title": "Palm Grove Villas",
+    "price": 45000,
+    "location": "ECR, Chennai",
+    "bhk": 4,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p4/640/420",
+    "description": "Independent villa near the coast with a private garden and 2 covered car parks."
+  },
+  {
+    "id": "p5",
+    "title": "City Center Studio",
+    "price": 18000,
+    "location": "Connaught Place, Delhi",
+    "bhk": 1,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p5/640/420",
+    "description": "Compact 1BHK studio, fully furnished, walking distance from the metro."
+  },
+  {
+    "id": "p6",
+    "title": "Riverside Enclave",
+    "price": 9800000,
+    "location": "Kothrud, Pune",
+    "bhk": 2,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p6/640/420",
+    "description": "Well-ventilated 2BHK in a quiet residential lane, close to schools and hospitals."
+  },
+  {
+    "id": "p7",
+    "title": "Golden Sands Apartments",
+    "price": 6200000,
+    "location": "Vashi, Navi Mumbai",
+    "bhk": 1,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p7/640/420",
+    "description": "Affordable 1BHK for first-time buyers, near the railway station."
+  },
+  {
+    "id": "p8",
+    "title": "Emerald Court",
+    "price": 55000,
+    "location": "Indiranagar, Bengaluru",
+    "bhk": 3,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p8/640/420",
+    "description": "Fully furnished 3BHK in a prime location surrounded by cafes and offices."
+  },
+  {
+    "id": "p9",
+    "title": "Silver Oak Residency",
+    "price": 15500000,
+    "location": "Banjara Hills, Hyderabad",
+    "bhk": 4,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p9/640/420",
+    "description": "Luxury 4BHK duplex with a private terrace and dedicated staff quarters."
+  },
+  {
+    "id": "p10",
+    "title": "Maple Street Homes",
+    "price": 27000,
+    "location": "Salt Lake, Kolkata",
+    "bhk": 2,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p10/640/420",
+    "description": "Cozy 2BHK in a family-friendly neighbourhood with a nearby park."
+  },
+  {
+    "id": "p11",
+    "title": "Orchid Towers",
+    "price": 7300000,
+    "location": "Baner, Pune",
+    "bhk": 2,
+    "type": "buy",
+    "image": "https://picsum.photos/seed/p11/640/420",
+    "description": "Modern 2BHK tower apartment with a rooftop swimming pool and gym."
+  },
+  {
+    "id": "p12",
+    "title": "Harbor View Residences",
+    "price": 40000,
+    "location": "Marine Lines, Mumbai",
+    "bhk": 1,
+    "type": "rent",
+    "image": "https://picsum.photos/seed/p12/640/420",
+    "description": "Sea-facing 1BHK with unobstructed harbor views and a balcony."
+  }
+]
