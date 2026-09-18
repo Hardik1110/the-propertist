@@ -1,69 +1,148 @@
-import Image from "next/image";
+"use client";
+
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import propertiesData from "@/data/properties.json";
+import type { ListingType, Property, SortOption } from "@/types/property";
+import { useDebounce } from "@/hooks/useDebounce";
+import { SearchBar } from "@/components/SearchBar";
+import { FilterBar } from "@/components/FilterBar";
+import { PropertyCard } from "@/components/PropertyCard";
+import { PropertyCardSkeleton } from "@/components/PropertyCardSkeleton";
+
+const properties = propertiesData as Property[];
+
+function parseBhk(raw: string | null): number | "all" {
+  const parsed = Number(raw);
+  return raw && [1, 2, 3, 4].includes(parsed) ? parsed : "all";
+}
+
+function parseListingType(raw: string | null): ListingType | "all" {
+  return raw === "buy" || raw === "rent" ? raw : "all";
+}
+
+function parseSort(raw: string | null): SortOption {
+  return raw === "price-asc" || raw === "price-desc" ? raw : "relevance";
+}
+
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
+  const [bhk, setBhk] = useState<number | "all">(() => parseBhk(searchParams.get("bhk")));
+  const [listingType, setListingType] = useState<ListingType | "all">(() =>
+    parseListingType(searchParams.get("type"))
+  );
+  const [sort, setSort] = useState<SortOption>(() => parseSort(searchParams.get("sort")));
+  const [isLoading, setIsLoading] = useState(true);
+
+  const debouncedQuery = useDebounce(query, 300);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery.trim()) params.set("q", debouncedQuery.trim());
+    if (bhk !== "all") params.set("bhk", String(bhk));
+    if (listingType !== "all") params.set("type", listingType);
+    if (sort !== "relevance") params.set("sort", sort);
+
+    const queryString = params.toString();
+    router.replace(queryString ? `/?${queryString}` : "/", { scroll: false });
+  }, [debouncedQuery, bhk, listingType, sort, router]);
+
+  const filteredProperties = useMemo(() => {
+    const normalizedQuery = debouncedQuery.trim().toLowerCase();
+
+    const matches = properties.filter((property) => {
+      const matchesQuery =
+        normalizedQuery === "" ||
+        property.location.toLowerCase().includes(normalizedQuery) ||
+        property.title.toLowerCase().includes(normalizedQuery);
+      const matchesBhk = bhk === "all" || property.bhk === bhk;
+      const matchesType = listingType === "all" || property.type === listingType;
+
+      return matchesQuery && matchesBhk && matchesType;
+    });
+
+    if (sort === "price-asc") {
+      return [...matches].sort((a, b) => a.price - b.price);
+    }
+    if (sort === "price-desc") {
+      return [...matches].sort((a, b) => b.price - a.price);
+    }
+    return matches;
+  }, [debouncedQuery, bhk, listingType, sort]);
+
+  const hasActiveFilters =
+    query.trim() !== "" || bhk !== "all" || listingType !== "all" || sort !== "relevance";
+
+  function clearFilters() {
+    setQuery("");
+    setBhk("all");
+    setListingType("all");
+    setSort("relevance");
+  }
+
+  return (
+    <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+      <div className="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-600 px-5 py-8 text-white sm:px-8 sm:py-10">
+        <h1 className="text-xl font-semibold sm:text-3xl">Find your next home</h1>
+        <p className="mt-1 text-sm text-blue-100 sm:text-base">
+          Handpicked apartments, villas, and studios to buy or rent across India.
+        </p>
+
+        <div className="mt-6 flex flex-col gap-4 rounded-xl bg-white p-3 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+          <SearchBar value={query} onChange={setQuery} />
+          <FilterBar
+            bhk={bhk}
+            onBhkChange={setBhk}
+            listingType={listingType}
+            onListingTypeChange={setListingType}
+            sort={sort}
+            onSortChange={setSort}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          {isLoading ? "Loading properties…" : `${filteredProperties.length} properties found`}
+        </p>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="text-sm font-medium text-blue-700 hover:underline"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, i) => <PropertyCardSkeleton key={i} />)
+          : filteredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+      </div>
+
+      {!isLoading && filteredProperties.length === 0 && (
+        <p className="mt-8 text-center text-gray-500">No properties match your filters.</p>
+      )}
+    </main>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }
